@@ -263,6 +263,8 @@ namespace ImmortalSerials
             }
             if (!SpellData.Q.IsReady() && !SpellData.W.IsReady() && !SpellData.E.IsReady() && SpellData.R.IsReady() && distance < SpellData.R.Range)
             {
+                Orbwalker.SetMovement(false);
+                Orbwalker.SetAttack(false);
                 SpellData.R.SmartCast(target);
             }
             if (!SpellData.Q.IsReady() && (!SpellData.W.IsReady() || distance > SpellData.W.Range) && !SpellData.E.IsReady() &&
