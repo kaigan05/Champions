@@ -33,12 +33,10 @@ namespace ImmortalSerials.Objects
         Blink,
         Invulnerability
     }
-    public class MySpell : Spell
+    public class MySpell : LeagueSharp.Common.Spell
     {
-        public string ChampionName { get; set; }
         public string Name { get; set; }
-        public bool IsFlee { get; set; }
-        public MySpell(SpellSlot slot, float range):base(slot,range)
+        public MySpell(SpellSlot slot, float range): base(slot, range)
         {
             if (slot == SpellSlot.Summoner1 || slot == SpellSlot.Summoner2)
             {
@@ -70,7 +68,7 @@ namespace ImmortalSerials.Objects
             }
         }
 
-        public new float GetDamage(Obj_AI_Base target, int state=0)
+        public new float GetDamage(Obj_AI_Base target, int state = 0)
         {
             if (Name == "summonerdot")
             {
@@ -84,7 +82,7 @@ namespace ImmortalSerials.Objects
             return TargetTypes.Any(targetType => target == targetType);
         }
 
-        public IList<Obj_AI_Base> CanCast(IList<Obj_AI_Base> minions,bool checkRange=false)
+        public IList<Obj_AI_Base> CanCast(IList<Obj_AI_Base> minions, bool checkRange = false)
         {
             var result = new List<Obj_AI_Base>();
             foreach (var targetType in TargetTypes)
@@ -98,11 +96,11 @@ namespace ImmortalSerials.Objects
                         result.AddRange(minions.Where(m => m.IsAlly && (!checkRange || IsInRange(m))));
                         break;
                 }
-                
+
             }
             return result;
         }
-        public bool CanCast(Obj_AI_Base minions,bool checkRange=false)
+        public bool CanCast(Obj_AI_Base minions, bool checkRange = false)
         {
             if (checkRange && !IsInRange(minions))
             {
@@ -121,11 +119,10 @@ namespace ImmortalSerials.Objects
             }
             return false;
         }
-        public delegate float MoveBuffSpeed();
-        public MoveBuffSpeed MoveSpeed;
-        public EvadeType EvadeType=EvadeType.None;
-        public CastType CastType=CastType.Targeted;
-        public TargetType[] TargetTypes= {TargetType.Enemy};
+        //public delegate float MoveBuffSpeed();
+        //public MoveBuffSpeed MoveSpeed;
+        public CastType CastType = CastType.Targeted;
+        public TargetType[] TargetTypes = { TargetType.Enemy };
         private bool _isReadyKs;
         private bool _isReadyHarass;
         private bool _isReadyClear;
@@ -151,6 +148,6 @@ namespace ImmortalSerials.Objects
             set { _isReadyFarm = value; }
         }
 
-        public bool IsBlink { get; set; }
+        public string ChampionName { get; set; }
     }
 }

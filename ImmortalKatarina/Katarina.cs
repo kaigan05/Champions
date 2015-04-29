@@ -7,12 +7,13 @@ using ImmortalSerials.Model;
 using ImmortalSerials.Objects;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SpellData = ImmortalSerials.Model.SpellData;
 
 namespace ImmortalSerials
 {
     internal class Katarina : Champion
     {
+        
+        readonly List<MySpell> playerSpells = new List<MySpell>();
         public Katarina()
         {
             KatarinaMenu();
@@ -21,16 +22,16 @@ namespace ImmortalSerials
             new AutoLevel(new List<SpellSlot>
             { SpellSlot.Q, SpellSlot.E, SpellSlot.W, SpellSlot.Q, SpellSlot.Q, SpellSlot.R,
             SpellSlot.Q, SpellSlot.W, SpellSlot.Q, SpellSlot.W, SpellSlot.R, SpellSlot.W, SpellSlot.W, SpellSlot.E, SpellSlot.E, SpellSlot.R, SpellSlot.E, SpellSlot.E});
-            Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
+            //Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
         }
 
-        void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
-        {
-            if (sender.IsMe)
-            {
-                Console.WriteLine(args.SData.Name);
-            }
-        }
+        //void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        //{
+        //    if (sender.IsMe)
+        //    {
+        //        Console.WriteLine(args.SData.Name);
+        //    }
+        //}
         private void Game_OnGameUpdate(EventArgs args)
         {
             if (Player.IsDead)
@@ -90,12 +91,12 @@ namespace ImmortalSerials
                     Farm(true);
                     break;
             }
-            //if (SpellData.E.IsReady())
+            //if (E.IsReady())
             //{
             
                 //if (Evader.IsSafe(Player.Position.To2D())) return;
-                //var minion = ObjectManager.Get<Obj_AI_Base>().Where(m => m.Distance(Player) < SpellData.E.Range && Evader.IsSafe(m.Position.To2D()) && !m.IsValid<Obj_AI_Turret>()).Aggregate((v1, v2) => v1.Distance(Game.CursorPos.To2D()) > v2.Distance(Game.CursorPos.To2D()) ? v2 : v1);
-                //SpellData.E.SmartCast(minion);
+                //var minion = ObjectManager.Get<Obj_AI_Base>().Where(m => m.Distance(Player) < E.Range && Evader.IsSafe(m.Position.To2D()) && !m.IsValid<Obj_AI_Turret>()).Aggregate((v1, v2) => v1.Distance(Game.CursorPos.To2D()) > v2.Distance(Game.CursorPos.To2D()) ? v2 : v1);
+                //E.SmartCast(minion);
                 //Game.PrintChat("Ne skill");
             //}
         }
@@ -113,23 +114,23 @@ namespace ImmortalSerials
                 }
                 float targetHealth = target.Health;
                 float qDame, q1Dame;
-                if (SpellData.Q.IsReadyKs)
+                if (SpellDb.Q.IsReadyKs)
                 {
-                    qDame = SpellData.Q.GetDamage(target);
-                    q1Dame = SpellData.Q.GetDamage(target, 1);
+                    qDame = SpellDb.Q.GetDamage(target);
+                    q1Dame = SpellDb.Q.GetDamage(target, 1);
                 }
                 else
                 {
                     if (target.HasBuff("katarinaqmark", true))
                     {
-                        targetHealth -= SpellData.Q.GetDamage(target, 1);
+                        targetHealth -= SpellDb.Q.GetDamage(target, 1);
                     }
                     qDame = 0;
                     q1Dame = 0;
                 }
-                var wDame = SpellData.W.IsReadyKs ? SpellData.W.GetDamage(target) : 0;
-                var eDame = SpellData.E.IsReadyKs ? SpellData.E.GetDamage(target) : 0;
-                var rDame = SpellData.R.IsReadyKs ? SpellData.R.GetDamage(target, 1) : 0;
+                var wDame = SpellDb.W.IsReadyKs ? SpellDb.W.GetDamage(target) : 0;
+                var eDame = SpellDb.E.IsReadyKs ? SpellDb.E.GetDamage(target) : 0;
+                var rDame = SpellDb.R.IsReadyKs ? SpellDb.R.GetDamage(target, 1) : 0;
                 var qewDame = qDame + eDame + q1Dame + wDame;
                 if (qewDame + rDame < targetHealth)
                 {
@@ -141,65 +142,65 @@ namespace ImmortalSerials
                 {
                     if (wDame > targetHealth)
                     {
-                        if (SpellData.W.Range > dist)
+                        if (SpellDb.W.Range > dist)
                         {
-                            SpellData.W.SmartCast(target);
+                            SpellDb.W.SmartCast(target);
                         }
                         else
                         {
-                            KsJump(target, SpellData.W, dist);
+                            KsJump(target, SpellDb.W, dist);
                         }
                         return;
                     }
-                    if (eDame > 0 && SpellData.E.Range > dist)
+                    if (eDame > 0 && SpellDb.E.Range > dist)
                     {
                         if (eDame + wDame > targetHealth)
                         {
-                            SpellData.E.SmartCast(target);
+                            SpellDb.E.SmartCast(target);
                             return;
                         }
                         if (qewDame > targetHealth)
                         {
-                            if (SpellData.Q.Range > dist)
+                            if (SpellDb.Q.Range > dist)
                             {
-                                SpellData.Q.SmartCast(target);
+                                SpellDb.Q.SmartCast(target);
                             }
                             else
                             {
-                                SpellData.E.SmartCast(target);
+                                SpellDb.E.SmartCast(target);
                             }
                             return;
                         }
                     }
                     if (qDame + wDame + q1Dame > targetHealth)
                     {
-                        if (SpellData.Q.Range > dist)
+                        if (SpellDb.Q.Range > dist)
                         {
-                            SpellData.Q.SmartCast(target);
+                            SpellDb.Q.SmartCast(target);
                         }
                         else
                         {
-                            KsJump(target, SpellData.W, dist);
+                            KsJump(target, SpellDb.W, dist);
                         }
                         return;
                     }
                 }
-                if (eDame > 0 && SpellData.E.Range > dist)
+                if (eDame > 0 && SpellDb.E.Range > dist)
                 {
                     if (eDame > targetHealth)
                     {
-                        SpellData.E.SmartCast(target);
+                        SpellDb.E.SmartCast(target);
                         return;
                     }
                     if (qDame + eDame + q1Dame > targetHealth)
                     {
-                        if (SpellData.Q.Range > dist)
+                        if (SpellDb.Q.Range > dist)
                         {
-                            SpellData.Q.SmartCast(target);
+                            SpellDb.Q.SmartCast(target);
                         }
                         else
                         {
-                            SpellData.E.SmartCast(target);
+                            SpellDb.E.SmartCast(target);
                         }
                         return;
                     }
@@ -207,13 +208,13 @@ namespace ImmortalSerials
 
                 if (qDame > targetHealth)
                 {
-                    if (SpellData.Q.Range > dist)
+                    if (SpellDb.Q.Range > dist)
                     {
-                        SpellData.Q.SmartCast(target);
+                        SpellDb.Q.SmartCast(target);
                     }
                     else
                     {
-                        KsJump(target, SpellData.Q, dist);
+                        KsJump(target, SpellDb.Q, dist);
                     }
                     return;
                 }
@@ -222,14 +223,14 @@ namespace ImmortalSerials
                 {
                     if (rDame > target.Health)
                     {
-                        if (SpellData.R.Range / 2 > dist)
+                        if (SpellDb.R.Range / 2 > dist)
                         {
-                            SpellData.R.SmartCast(target);
+                            SpellDb.R.SmartCast(target);
                         }
                     }
                 }
 
-                if (qewDame + rDame <= 0 && !Player.IsChannelingImportantSpell() && SpellData.Ignite.Range > dist)
+                if (qewDame + rDame <= 0 && !Player.IsChannelingImportantSpell() && SpellDb.Ignite.Range > dist)
                 {
                     CastIgnite(target);
                 }
@@ -243,151 +244,151 @@ namespace ImmortalSerials
         private void Combo()
         {
             var target = TargetSelector.GetSelectedTarget() ??
-                         TargetSelector.GetTarget(SpellData.Q.Range, TargetSelector.DamageType.Magical);
+                         TargetSelector.GetTarget(SpellDb.Q.Range, TargetSelector.DamageType.Magical);
             if (target == null || Player.IsChannelingImportantSpell()|| Player.HasBuff("katarinarsound", true))
             {
                 return;
             }
             var distance = Player.Distance(target.ServerPosition);
-            if (SpellData.Q.IsReady() && distance <= SpellData.Q.Range + target.BoundingRadius)
+            if (SpellDb.Q.IsReady() && distance <= SpellDb.Q.Range + target.BoundingRadius)
             {
-                SpellData.Q.SmartCast(target);
+                SpellDb.Q.SmartCast(target);
             }
-            if (SpellData.E.IsReady() && distance < SpellData.E.Range + target.BoundingRadius)
+            if (SpellDb.E.IsReady() && distance < SpellDb.E.Range + target.BoundingRadius)
             {
-                SpellData.E.SmartCast(target);
+                SpellDb.E.SmartCast(target);
             }
-            if (SpellData.W.IsReady() && distance < SpellData.W.Range)
+            if (SpellDb.W.IsReady() && distance < SpellDb.W.Range)
             {
-                SpellData.W.SmartCast(target);
+                SpellDb.W.SmartCast(target);
             }
-            if (!SpellData.Q.IsReady() && !SpellData.W.IsReady() && !SpellData.E.IsReady() && SpellData.R.IsReady() && distance < SpellData.R.Range)
+            if (!SpellDb.Q.IsReady() && !SpellDb.W.IsReady() && !SpellDb.E.IsReady() && SpellDb.R.IsReady() && distance < SpellDb.R.Range)
             {
                 Orbwalker.SetMovement(false);
                 Orbwalker.SetAttack(false);
-                SpellData.R.SmartCast(target);
+                SpellDb.R.SmartCast(target);
             }
-            if (!SpellData.Q.IsReady() && (!SpellData.W.IsReady() || distance > SpellData.W.Range) && !SpellData.E.IsReady() &&
-                !Player.IsChannelingImportantSpell() && SpellData.Ignite.Range > distance)
+            if (!SpellDb.Q.IsReady() && (!SpellDb.W.IsReady() || distance > SpellDb.W.Range) && !SpellDb.E.IsReady() &&
+                !Player.IsChannelingImportantSpell() && SpellDb.Ignite.Range > distance)
                 CastIgnite(target);
         }
 
         private void Harras()
         {
             var target = TargetSelector.GetSelectedTarget() ??
-                         TargetSelector.GetTarget(SpellData.Q.Range, TargetSelector.DamageType.Magical);
+                         TargetSelector.GetTarget(SpellDb.Q.Range, TargetSelector.DamageType.Magical);
             if (target == null)
                 return;
             var dis = Player.Distance(target.ServerPosition);
-            if (SpellData.Q.IsReadyHarass && dis <= SpellData.Q.Range + target.BoundingRadius)
+            if (SpellDb.Q.IsReadyHarass && dis <= SpellDb.Q.Range + target.BoundingRadius)
             {
-                SpellData.Q.CastOnUnit(target, UsePacket);
+                SpellDb.Q.CastOnUnit(target, UsePacket);
             }
-            if (SpellData.E.IsReadyHarass && dis < SpellData.E.Range + target.BoundingRadius && !target.UnderTurret(true) &&
-                (SpellData.Q.IsReadyHarass || SpellData.W.IsReadyHarass))
+            if (SpellDb.E.IsReadyHarass && dis < SpellDb.E.Range + target.BoundingRadius && !target.UnderTurret(true) &&
+                (SpellDb.Q.IsReadyHarass || SpellDb.W.IsReadyHarass))
             {
-                SpellData.E.CastOnUnit(target, UsePacket);
+                SpellDb.E.CastOnUnit(target, UsePacket);
             }
-            if (SpellData.W.IsReadyHarass && dis < SpellData.W.Range)
+            if (SpellDb.W.IsReadyHarass && dis < SpellDb.W.Range)
             {
-                SpellData.W.Cast();
+                SpellDb.W.Cast();
             }
         }
 
         public void Farm(bool dondep = false)
         {
-            var targets = MinionManager.GetMinions(Player.ServerPosition, SpellData.Q.Range, MinionTypes.All, MinionTeam.NotAlly);
+            var targets = MinionManager.GetMinions(Player.ServerPosition, SpellDb.Q.Range, MinionTypes.All, MinionTeam.NotAlly);
             if (targets.Count <= 0)
                 return;
-            var target = targets.Where(o => Player.Distance(o) <= SpellData.Q.Range).OrderBy(o => o.Health).FirstOrDefault();
+            var target = targets.Where(o => Player.Distance(o) <= SpellDb.Q.Range).OrderBy(o => o.Health).FirstOrDefault();
             if (target == null)
                 return;
             var dist = Player.Distance(target);
             if (dondep)
             {
-                if (SpellData.Q.IsReadyClear)
+                if (SpellDb.Q.IsReadyClear)
                 {
-                    SpellData.Q.SmartCast(target);
+                    SpellDb.Q.SmartCast(target);
                 }
-                if (SpellData.W.IsReadyClear && SpellData.E.IsReadyClear)
+                if (SpellDb.W.IsReadyClear && SpellDb.E.IsReadyClear)
                 {
-                    SpellData.E.SmartCast(target);
+                    SpellDb.E.SmartCast(target);
                 }
-                if (SpellData.W.IsReadyClear && dist < SpellData.W.Range)
+                if (SpellDb.W.IsReadyClear && dist < SpellDb.W.Range)
                 {
-                    SpellData.W.SmartCast(target);
+                    SpellDb.W.SmartCast(target);
                 }
             }
             else
             {
                 float targetHealth = target.Health;
                 float qDame, q1Dame;
-                if (SpellData.Q.IsReadyFarm)
+                if (SpellDb.Q.IsReadyFarm)
                 {
-                    qDame = GetTrueDame(target, SpellData.Q.GetDamage(target));
-                    q1Dame = GetTrueDame(target, SpellData.Q.GetDamage(target, 1));
+                    qDame = GetTrueDame(target, SpellDb.Q.GetDamage(target));
+                    q1Dame = GetTrueDame(target, SpellDb.Q.GetDamage(target, 1));
                 }
                 else
                 {
                     if (target.HasBuff("katarinaqmark", true))
                     {
-                        targetHealth -= GetTrueDame(target, SpellData.Q.GetDamage(target, 1));
+                        targetHealth -= GetTrueDame(target, SpellDb.Q.GetDamage(target, 1));
                     }
                     qDame = 0;
                     q1Dame = 0;
                 }
-                var wDame = SpellData.W.IsReadyFarm ? GetTrueDame(target, SpellData.W.GetDamage(target)) : 0;
+                var wDame = SpellDb.W.IsReadyFarm ? GetTrueDame(target, SpellDb.W.GetDamage(target)) : 0;
                 float eDame = 0;
                 if (!target.UnderTurret())
                 {
-                    eDame = SpellData.E.IsReadyFarm ? GetTrueDame(target, SpellData.E.GetDamage(target)) : 0;
+                    eDame = SpellDb.E.IsReadyFarm ? GetTrueDame(target, SpellDb.E.GetDamage(target)) : 0;
                 }
                 var qewDame = qDame + eDame + q1Dame + wDame;
                 if (qewDame < targetHealth)
                 {
                     return;
                 }
-                if (wDame > 0 && SpellData.W.Range > dist)
+                if (wDame > 0 && SpellDb.W.Range > dist)
                 {
                     if (wDame > targetHealth)
                     {
-                        SpellData.W.SmartCast(target);
+                        SpellDb.W.SmartCast(target);
                         return;
                     }
                     if (eDame > 0)
                     {
                         if (eDame + wDame > targetHealth)
                         {
-                            SpellData.E.SmartCast(target);
+                            SpellDb.E.SmartCast(target);
                             return;
                         }
                         if (qewDame > targetHealth)
                         {
-                            SpellData.Q.SmartCast(target);
+                            SpellDb.Q.SmartCast(target);
                             return;
                         }
                     }
                     if (qDame + wDame + q1Dame > targetHealth)
                     {
-                        SpellData.Q.SmartCast(target);
+                        SpellDb.Q.SmartCast(target);
                         return;
                     }
                 }
                 if (qDame > targetHealth)
                 {
-                    SpellData.Q.SmartCast(target);
+                    SpellDb.Q.SmartCast(target);
                     return;
                 }
                 if (eDame > 0)
                 {
                     if (eDame > targetHealth)
                     {
-                        SpellData.E.SmartCast(target);
+                        SpellDb.E.SmartCast(target);
                         return;
                     }
                     if (qDame + eDame + q1Dame > targetHealth)
                     {
-                        SpellData.Q.SmartCast(target);
+                        SpellDb.Q.SmartCast(target);
                         return;
                     }
                 }
@@ -413,12 +414,12 @@ namespace ImmortalSerials
             var pos = Drawing.WorldToScreen(Player.Position);
           //if (target != null)
           //{
-          //    Drawing.DrawText(pos.X - 30, pos.Y + 35, Color.GreenYellow, String.Format("{0} == {1}", GetTrueDame(target, SpellData.Q.GetDamage(target)).ToString(), target.Health - GetTrueDame(target, SpellData.Q.GetDamage(target))));
-          //    Drawing.DrawText(pos.X - 30, pos.Y + 45, Color.GreenYellow, String.Format("{0} == {1}", GetTrueDame(target, SpellData.W.GetDamage(target)).ToString(), target.Health - GetTrueDame(target, SpellData.W.GetDamage(target))));
+          //    Drawing.DrawText(pos.X - 30, pos.Y + 35, Color.GreenYellow, String.Format("{0} == {1}", GetTrueDame(target, SpellDb.Q.GetDamage(target)).ToString(), target.Health - GetTrueDame(target, SpellDb.Q.GetDamage(target))));
+          //    Drawing.DrawText(pos.X - 30, pos.Y + 45, Color.GreenYellow, String.Format("{0} == {1}", GetTrueDame(target, SpellDb.W.GetDamage(target)).ToString(), target.Health - GetTrueDame(target, SpellDb.W.GetDamage(target))));
             
             
           //}
-            //Drawing.DrawText(pos.X - 30, pos.Y + 35, Color.GreenYellow, SpellData.Q.GetDamage(target, 0).ToString());
+            //Drawing.DrawText(pos.X - 30, pos.Y + 35, Color.GreenYellow, SpellDb.Q.GetDamage(target, 0).ToString());
             Render.Circle.DrawCircle(Player.Position.Extend(Game.CursorPos, 599), 10, Color.Gold);
             if (MainMenu.Item("AutoF").GetValue<KeyBind>().Active)
             {
@@ -428,7 +429,7 @@ namespace ImmortalSerials
             {
                 Drawing.DrawText(pos.X - 30, pos.Y + 25, Color.Black, "LastHit: Off");
             }
-            foreach (var spell in SpellData.PlayerSpells)
+            foreach (var spell in playerSpells)
             {
                 var item = MainMenu.Item("Draw" + spell.Slot).GetValue<Circle>();
                 if (item.Active)
@@ -471,52 +472,52 @@ namespace ImmortalSerials
                 .AddItem(new MenuItem("DrawE", "E range").SetValue(new Circle(false, Color.Crimson)));
             MainMenu.SubMenu("Drawing").AddItem(new MenuItem("DrawR", "R range").SetValue(new Circle(true, Color.Red)));
             MainMenu.AddToMainMenu();
-            SpellData.Q.IsReadyKs = MainMenu.Item("UseQKS").GetValue<bool>();
-            SpellData.E.IsReadyKs = MainMenu.Item("UseEKS").GetValue<bool>();
-            SpellData.W.IsReadyKs = MainMenu.Item("UseWKS").GetValue<bool>();
-            //SpellData.R.IsReadyKs = MainMenu.Item("UseRKS").GetValue<bool>();
-            SpellData.Q.IsReadyHarass = MainMenu.Item("UseQH").GetValue<bool>();
-            SpellData.W.IsReadyHarass = MainMenu.Item("UseWH").GetValue<bool>();
-            SpellData.E.IsReadyHarass = MainMenu.Item("UseEH").GetValue<bool>();
-            SpellData.Q.IsReadyFarm = MainMenu.Item("UseQF").GetValue<bool>();
-            SpellData.W.IsReadyFarm = MainMenu.Item("UseWF").GetValue<bool>();
-            SpellData.E.IsReadyFarm = MainMenu.Item("UseEF").GetValue<bool>();
-            SpellData.Q.IsReadyClear = MainMenu.Item("UseQC").GetValue<bool>();
-            SpellData.W.IsReadyClear = MainMenu.Item("UseWC").GetValue<bool>();
-            SpellData.E.IsReadyClear = MainMenu.Item("UseEC").GetValue<bool>();
-            useQKs.ValueChanged += (sender, args) => SpellData.Q.IsReadyKs = args.GetNewValue<bool>();
-            useEKs.ValueChanged += (sender, args) => SpellData.E.IsReadyKs = args.GetNewValue<bool>();
-            useWKs.ValueChanged += (sender, args) => SpellData.W.IsReadyKs = args.GetNewValue<bool>();
-            //useRKs.ValueChanged += (sender, args) => SpellData.R.IsReadyKs = args.GetNewValue<bool>();
-            useQh.ValueChanged += (sender, args) => SpellData.Q.IsReadyHarass = args.GetNewValue<bool>();
-            useEh.ValueChanged += (sender, args) => SpellData.E.IsReadyHarass = args.GetNewValue<bool>();
-            useWh.ValueChanged += (sender, args) => SpellData.W.IsReadyHarass = args.GetNewValue<bool>();
-            useQf.ValueChanged += (sender, args) => SpellData.Q.IsReadyFarm = args.GetNewValue<bool>();
-            useEf.ValueChanged += (sender, args) => SpellData.E.IsReadyFarm = args.GetNewValue<bool>();
-            useWf.ValueChanged += (sender, args) => SpellData.W.IsReadyFarm = args.GetNewValue<bool>();
-            useQc.ValueChanged += (sender, args) => SpellData.Q.IsReadyClear = args.GetNewValue<bool>();
-            useEc.ValueChanged += (sender, args) => SpellData.E.IsReadyClear = args.GetNewValue<bool>();
-            useWc.ValueChanged += (sender, args) => SpellData.W.IsReadyClear = args.GetNewValue<bool>();
+            SpellDb.Q.IsReadyKs = MainMenu.Item("UseQKS").GetValue<bool>();
+            SpellDb.E.IsReadyKs = MainMenu.Item("UseEKS").GetValue<bool>();
+            SpellDb.W.IsReadyKs = MainMenu.Item("UseWKS").GetValue<bool>();
+            //R.IsReadyKs = MainMenu.Item("UseRKS").GetValue<bool>();
+            SpellDb.Q.IsReadyHarass = MainMenu.Item("UseQH").GetValue<bool>();
+            SpellDb.W.IsReadyHarass = MainMenu.Item("UseWH").GetValue<bool>();
+            SpellDb.E.IsReadyHarass = MainMenu.Item("UseEH").GetValue<bool>();
+            SpellDb.Q.IsReadyFarm = MainMenu.Item("UseQF").GetValue<bool>();
+            SpellDb.W.IsReadyFarm = MainMenu.Item("UseWF").GetValue<bool>();
+            SpellDb.E.IsReadyFarm = MainMenu.Item("UseEF").GetValue<bool>();
+            SpellDb.Q.IsReadyClear = MainMenu.Item("UseQC").GetValue<bool>();
+            SpellDb.W.IsReadyClear = MainMenu.Item("UseWC").GetValue<bool>();
+            SpellDb.E.IsReadyClear = MainMenu.Item("UseEC").GetValue<bool>();
+            useQKs.ValueChanged += (sender, args) => SpellDb.Q.IsReadyKs = args.GetNewValue<bool>();
+            useEKs.ValueChanged += (sender, args) => SpellDb.E.IsReadyKs = args.GetNewValue<bool>();
+            useWKs.ValueChanged += (sender, args) => SpellDb.W.IsReadyKs = args.GetNewValue<bool>();
+            //useRKs.ValueChanged += (sender, args) => R.IsReadyKs = args.GetNewValue<bool>();
+            useQh.ValueChanged += (sender, args) => SpellDb.Q.IsReadyHarass = args.GetNewValue<bool>();
+            useEh.ValueChanged += (sender, args) => SpellDb.E.IsReadyHarass = args.GetNewValue<bool>();
+            useWh.ValueChanged += (sender, args) => SpellDb.W.IsReadyHarass = args.GetNewValue<bool>();
+            useQf.ValueChanged += (sender, args) => SpellDb.Q.IsReadyFarm = args.GetNewValue<bool>();
+            useEf.ValueChanged += (sender, args) => SpellDb.E.IsReadyFarm = args.GetNewValue<bool>();
+            useWf.ValueChanged += (sender, args) => SpellDb.W.IsReadyFarm = args.GetNewValue<bool>();
+            useQc.ValueChanged += (sender, args) => SpellDb.Q.IsReadyClear = args.GetNewValue<bool>();
+            useEc.ValueChanged += (sender, args) => SpellDb.E.IsReadyClear = args.GetNewValue<bool>();
+            useWc.ValueChanged += (sender, args) => SpellDb.W.IsReadyClear = args.GetNewValue<bool>();
             Utility.HpBarDamageIndicator.DamageToUnit = GetComboDamage;
         }
 
         private float GetComboDamage(Obj_AI_Base enemy)
         {
             var damage = 0d;
-            if (SpellData.Q.IsReady())
-                damage += SpellData.Q.GetDamage(enemy) + SpellData.Q.GetDamage(enemy, 1);
+            if (SpellDb.Q.IsReady())
+                damage += SpellDb.Q.GetDamage(enemy) + SpellDb.Q.GetDamage(enemy, 1);
 
-            if (SpellData.W.IsReady())
-                damage += SpellData.W.GetDamage(enemy);
+            if (SpellDb.W.IsReady())
+                damage += SpellDb.W.GetDamage(enemy);
 
-            if (SpellData.E.IsReady())
-                damage += SpellData.E.GetDamage(enemy);
+            if (SpellDb.E.IsReady())
+                damage += SpellDb.E.GetDamage(enemy);
 
-            if (SpellData.Ignite.IsReady())
-                damage += SpellData.Ignite.GetDamage(enemy);
+            if (SpellDb.Ignite.IsReady())
+                damage += SpellDb.Ignite.GetDamage(enemy);
 
-            if (SpellData.R.IsReady())
-                damage += SpellData.R.GetDamage(enemy, 1) * 8;
+            if (SpellDb.R.IsReady())
+                damage += SpellDb.R.GetDamage(enemy, 1) * 8;
             return (float) damage;
         }
 
@@ -524,17 +525,17 @@ namespace ImmortalSerials
         {
             get { return MainMenu.Item("Packet").GetValue<bool>(); }
         }
-        private void KsJump(Obj_AI_Hero target, MySpell skillKs, float dist)
+        private void KsJump(Obj_AI_Hero target, LeagueSharp.Common.Spell skillKs, float dist)
         {
-            if (SpellData.E.IsReadyKs)
+            if (SpellDb.E.IsReadyKs)
             {
-                if (SpellData.E.Range < dist && SpellData.E.Range + Ward.CastRange > dist)
+                if (SpellDb.E.Range < dist && SpellDb.E.Range + Ward.CastRange > dist)
                 {
                     Ward.Jump(Player.ServerPosition.Extend(target.ServerPosition, Ward.CastRange));
                 }
-                else if (SpellData.E.Range + skillKs.Range > dist)
+                else if (SpellDb.E.Range + skillKs.Range > dist)
                 {
-                    SpellData.E.SmartCast(target);
+                    SpellDb.E.SmartCast(target);
                 }
             }
         }

@@ -6,16 +6,23 @@ using ImmortalSerials.Objects;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
-using SpellData = ImmortalSerials.Model.SpellData;
 
 namespace ImmortalSerials.Controller
 {
-    class SafeUnderTurret
+    static class SafeUnderTurret
     {
         private static int _lastSave;
+        private static readonly MySpell JumpSpell;
         public const int MinMinion = 1;
-        public SafeUnderTurret()
+        static SafeUnderTurret()
         {
+            switch (ObjectManager.Player.ChampionName)
+            {
+                case "Katarina":
+                    JumpSpell = SpellDb.E;
+                    break;
+            }
+            
             Obj_AI_Base.OnProcessSpellCast += OnProcessSpellCast;
         }
         private static void OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
@@ -68,14 +75,12 @@ namespace ImmortalSerials.Controller
                 {
                     var posDest = ChampionData.Player.ShortestPath(tur.GetSafePosCircle(TurretData.SafeDist));
                     bool flee = false;
-                    foreach (var spell in SpellData.PlayerSpells.Where(spell =>spell.IsFlee && spell.IsReady()))
+                    if (JumpSpell.IsReady())
                     {
-                        if (spell.CastType==CastType.Targeted)
-                        {
-                            foreach (var minion in minionsInRange.Where(minion =>spell.CanCast(minion)))
+                        foreach (var minion in minionsInRange.Where(minion => JumpSpell.CanCast(minion)))
                             {
                                 var turretOnMinion = minion.GetTurret() ?? tur;
-                                var distMove = Math.Max(0, ChampionData.Player.Distance(minion) - spell.Range) + Math.Max(0, minion.ShortestPath(turretOnMinion.GetSafePosCircle(TurretData.SafeDist)).Distance);
+                                var distMove = Math.Max(0, ChampionData.Player.Distance(minion) - JumpSpell.Range) + Math.Max(0, minion.ShortestPath(turretOnMinion.GetSafePosCircle(TurretData.SafeDist)).Distance);
                                 if (distMove < posDest.Distance || distMove == posDest.Distance && minion.Distance(turretOnMinion) > posDest.Position.Distance(tur.Position))
                                 {
                                     posDest = new Destination(minion, distMove);
@@ -84,12 +89,12 @@ namespace ImmortalSerials.Controller
                             if (posDest.ObjAiBase!=null)
                             {
                                 //Game.PrintChat("Cast skill " + spell.Slot + " vi tri: " + posDest.ObjAiBase.Name);
-                                if (spell.SmartCast(posDest.ObjAiBase))
+                                if (JumpSpell.SmartCast(posDest.ObjAiBase))
                                 {
                                     flee = true;
                                 }
                             }
-                            else if (spell.CanTarget(TargetType.Ally) && Ward.GetWardSlot() != null)
+                            else if (JumpSpell.CanTarget(TargetType.Ally) && Ward.GetWardSlot() != null)
                             {
                                 posDest = tur.LongestPath(ChampionData.Player.GetSafePosCircle(Ward.CastRange));
                                 //Game.PrintChat("Cast skill ward: " + posDest.Distance);
@@ -97,7 +102,7 @@ namespace ImmortalSerials.Controller
                                 {
                                     flee = true;
                                 }
-                            }
+                            
                         }
                         //No target?
                         //break;

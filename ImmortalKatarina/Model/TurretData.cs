@@ -54,7 +54,7 @@ namespace ImmortalSerials.Model
         //}
 
         /// <summary>
-        /// Lấy obj trụ mà obj nằm trong.
+        /// Lấy trụ mà obj nằm trong.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="team"></param>
@@ -66,7 +66,7 @@ namespace ImmortalSerials.Model
         }
 
         /// <summary>
-        /// Lấy obj trụ mà pos nằm trong.
+        /// Lấy trụ mà pos nằm trong.
         /// </summary>
         /// <param name="pos"></param>
         /// <param name="team"></param>

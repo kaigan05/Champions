@@ -67,11 +67,12 @@
     <Compile Include="Controller\SafeUnderTurret.cs" />
     <Compile Include="Model\ChampionData.cs" />
     <Compile Include="Model\Obj_AI_Data.cs" />
-    <Compile Include="Model\SpellData.cs" />
+    <Compile Include="Model\SpellDb.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Katarina.cs" />
     <Compile Include="Destination.cs" />
     <Compile Include="Objects\MySpell.cs" />
+    <Compile Include="Objects\Spell.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\SummonerSpell.cs" />

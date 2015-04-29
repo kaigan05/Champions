@@ -1,0 +1,13 @@
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\obj\x86\Debug\ImmortalSerials.csprojResolveAssemblyReference.cache
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\bin\Release\ImmortalSerials.exe.config
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\bin\Release\ImmortalSerials.exe
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\bin\Release\ImmortalSerials.pdb
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\bin\Release\clipper_library.dll
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\bin\Release\LeagueSharp.Common.dll
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\bin\Release\LeagueSharp.dll
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\bin\Release\SharpDX.Direct3D9.dll
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\bin\Release\SharpDX.dll
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\bin\Release\LeagueSharp.Sandbox.dll
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\bin\Release\LeagueSharp.xml
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\obj\x86\Debug\ImmortalSerials.exe
+C:\Users\Admin\Documents\GitHub\Champions\ImmortalKatarina\obj\x86\Debug\ImmortalSerials.pdb

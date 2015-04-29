@@ -1,7 +1,7 @@
 namespace ImmortalSerials
 {
-    public enum SummonerSpell
-    {
-        None,Ignite,Smite
-    }
+    //public enum SummonerSpell
+    //{
+    //    None,Ignite,Smite
+    //}
 }

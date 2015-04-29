@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
+using ImmortalSerials.Model;
 using ImmortalSerials.Objects;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
-using SpellData = ImmortalSerials.Model.SpellData;
 
 namespace ImmortalSerials.Controller
 {
@@ -16,12 +16,13 @@ namespace ImmortalSerials.Controller
         private static readonly MySpell JumpSpell;
         static Ward()
         {
-            foreach (var spell in SpellData.PlayerSpells.Where(spell => spell.IsFlee && spell.CanTarget(TargetType.Ally)))
+            switch (ObjectManager.Player.ChampionName)
             {
-                JumpSpell = spell;
-                GameObject.OnCreate += GameObject_OnCreate;
-                break;
+                case "Katarina":
+                    JumpSpell=SpellDb.E;
+                    break;
             }
+            GameObject.OnCreate += GameObject_OnCreate;
         }
         public static InventorySlot GetWardSlot()
         {
@@ -34,19 +35,17 @@ namespace ImmortalSerials.Controller
 
         public static bool Jump(Vector3 wardPosition)
         {
-            if (JumpSpell == null || Environment.TickCount < _lastJumpedTime || !JumpSpell.IsReady())
+            if (Environment.TickCount < _lastJumpedTime || !JumpSpell.IsReady())
             {
                 return false;
             }
             var obj =
-                ObjectManager.Get<Obj_AI_Base>()
-                    .Where(minion => JumpSpell.CanCast(minion, true) && minion.Distance(wardPosition) <= 300)
-                    .OrderBy(minion => minion.Distance(wardPosition))
-                    .FirstOrDefault();
+                ObjectManager.Get<Obj_AI_Base>().Where(minion => minion.Distance(wardPosition) <= 300)
+                    .OrderBy(minion => minion.Distance(wardPosition)).FirstOrDefault();
             if (obj != null)
             {
-                JumpSpell.SmartCast(obj);
-                _lastJumpedTime = Environment.TickCount + 2000;
+                JumpSpell.CastOnUnit(obj);
+                _lastJumpedTime = Environment.TickCount + 1000;
                 return true;
             }
             var slotWard = GetWardSlot();
@@ -66,8 +65,8 @@ namespace ImmortalSerials.Controller
             {
                 if ((ward.Name.Contains("Ward") && ward.Distance(_lastWardPos) < 100))
                 {
-                    JumpSpell.SmartCast(ward);
-                    _lastJumpedTime = Environment.TickCount + 2000;
+                    JumpSpell.CastOnUnit(ward);
+                    _lastJumpedTime = Environment.TickCount + 1000;
                 }
             }
         }

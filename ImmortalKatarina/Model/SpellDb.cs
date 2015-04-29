@@ -7,15 +7,16 @@ using LeagueSharp.Common;
 
 namespace ImmortalSerials.Model
 {
-    public static class SpellData
+    public static class SpellDb
     {
         public static MySpell Q, W, E, R;
         public static MySpell Flash, Ignite;
-        public static List<MySpell> PlayerSpells=new List<MySpell>();
+        public static List<MySpell> PlayerSpells = new List<MySpell>();
         public static readonly List<MySpell> SpellList = new List<MySpell>();
 
-        static SpellData()
+        static SpellDb()
         {
+            //Katarina
             SpellList.AddRange(
                 new List<MySpell>
                 {
@@ -24,13 +25,13 @@ namespace ImmortalSerials.Model
                     new MySpell(SpellSlot.E, 700)
                     {
                         ChampionName = "Katarina",
-                        IsFlee = true,
                         TargetTypes = new[] { TargetType.Ally, TargetType.Enemy }
                     },
                     new MySpell(SpellSlot.R, 550) { ChampionName = "Katarina",CastType = CastType.Self }
                 });
-           SpellList.AddRange(
-                new List<MySpell>
+            //LeeSin
+            SpellList.AddRange(
+                 new List<MySpell>
                 {
                     new MySpell(SpellSlot.Q, 1100)
                     {
@@ -45,7 +46,7 @@ namespace ImmortalSerials.Model
                     },
                     new MySpell(SpellSlot.W, 700)
                     {
-                        ChampionName = "LeeSin",CastType = CastType.Targeted,IsFlee = true,TargetTypes = new[] { TargetType.Ally}
+                        ChampionName = "LeeSin",CastType = CastType.Targeted,TargetTypes = new[] { TargetType.Ally}
                     },
                      new MySpell(SpellSlot.E, 350)
                      {
@@ -56,9 +57,8 @@ namespace ImmortalSerials.Model
                         ChampionName = "LeeSin",CastType = CastType.Targeted,
                     }
                 });
-            foreach (var spell in SpellList.Where(spell=>spell.ChampionName == ChampionData.Player.ChampionName))
+            foreach (var spell in SpellList.Where(spell => spell.ChampionName == ChampionData.Player.ChampionName))
             {
-                spell.Name = ChampionData.Player.GetSpell(SpellSlot.Q).Name;
                 switch (spell.Slot)
                 {
                     case SpellSlot.Q:
@@ -75,7 +75,7 @@ namespace ImmortalSerials.Model
                         break;
                 }
             }
-           
+
             var flash = ObjectManager.Player.GetSpellSlot("summonerflash");
             if (flash != SpellSlot.Unknown)
             {
@@ -85,11 +85,11 @@ namespace ImmortalSerials.Model
             if (ignite != SpellSlot.Unknown)
             {
                 Ignite = new MySpell(ignite, 600);
-            } 
+            }
         }
-        public static Dictionary<SpellSlot, MySpell> GetSpell()
-        {
-            return SpellList.Where(spell => spell.ChampionName == ObjectManager.Player.ChampionName).ToDictionary(spell => spell.Slot);
-        }
+        //public static Dictionary<SpellSlot, MySpell> GetSpell()
+        //{
+        //    return SpellList.Where(spell => spell.ChampionName == ObjectManager.Player.ChampionName).ToDictionary(spell => spell.Slot);
+        //}
     }
 }

@@ -1,26 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ImmortalSerials.Model;
+using ImmortalSerials.Objects;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
-using SpellData = ImmortalSerials.Model.SpellData;
 
 namespace ImmortalSerials
 {
     public class Champion
     {
-        public Items.Item Zhy;
         public static Orbwalking.Orbwalker Orbwalker;
         public static bool LastHiting = false;
         public Menu MainMenu;
         public static Obj_AI_Hero Player = ObjectManager.Player;
-        
         public static int LastMoveT;
         public Champion()
         {
             LoadMenu();
-            Zhy = new Items.Item((int)ItemId.Zhonyas_Hourglass);
         }
         public void LoadMenu()
         {
@@ -33,9 +31,9 @@ namespace ImmortalSerials
 
         public void CastIgnite(Obj_AI_Hero target)
         {
-            if (SpellData.Ignite.IsReady() && Player.GetSummonerSpellDamage(target, Damage.SummonerSpell.Ignite) > target.Health)
+            if (SpellDb.Ignite.IsReady() && Player.GetSummonerSpellDamage(target, Damage.SummonerSpell.Ignite) > target.Health)
             {
-                SpellData.Ignite.SmartCast(target);
+                SpellDb.Ignite.CastOnUnit(target);
             }
         }
         public static void MoveTo(Vector3 pos)
